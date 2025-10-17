@@ -10,15 +10,22 @@ load_dotenv()
 TOKEN = os.getenv('TOKEN_BOT')
 bot = telebot.TeleBot(TOKEN)
 
-# English - Czech words
-english_words = {
-    "fish": "ryba",
-    "replay": "přehrát",
-    "bow": "luk / uklonit se",
-    "minute": "minuta",
-    "time": "čas",
-    "cheese": "sýr"
-}
+
+# Function to load words from file
+def load_words_from_file(filename):
+    words = {}
+    with open(filename, "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+            if not line or "=" not in line:
+                continue
+            eng, cz = line.split("=", 1)
+            words[eng.strip()] = cz.strip()
+    return words
+
+
+# English - Czech words from file
+english_words = load_words_from_file("words.txt")
 subscribers = set()   # All users
 user_tests = {}       # Data tests
 
