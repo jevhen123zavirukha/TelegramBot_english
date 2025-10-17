@@ -2,6 +2,9 @@ import telebot
 import os
 from dotenv import load_dotenv
 import random
+import schedule
+import time
+import threading
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN_BOT')
@@ -169,6 +172,37 @@ def check_answer(message, word, correct):
         )
         del user_tests[message.chat.id]
 
+
+# Daily word sending
+def send_daily_word():
+
+    """
+    Sends a daily English word to all subscribed users.
+    Chooses a random word from the dictionary.
+    """
+
+    if not subscribers:
+        return
+    word = random.choice(list(english_words.keys()))
+    for user_id in subscribers:
+        bot.send_message(user_id, f"🌞 Word of the day:\n🧠 {word} — {english_words[word]}")
+
+
+# Schedule task at 9:00 AM
+schedule.every().day.at("09:00").do(send_daily_word)
+
+
+def scheduler():
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
+
+
+# Run schedule in background
+threading.Thread(target=scheduler, daemon=True).start()
+
+print("Bot is running!")
+bot.polling()
 
 if __name__ == "__main__":
     bot.polling()
