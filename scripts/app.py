@@ -26,14 +26,13 @@ def load_words_from_file(filename):
 
 # English - Czech words from file
 english_words = load_words_from_file("words.txt")
-subscribers = set()   # All users
-user_tests = {}       # Data tests
+subscribers = set()  # All users
+user_tests = {}  # Data tests
 
 
 # Start message
 @bot.message_handler(commands=['start'])
 def start(message):
-
     """
     Handles the /start command.
     Adds the user to the subscribers set and sends a welcome message
@@ -48,7 +47,8 @@ def start(message):
     btn1 = telebot.types.KeyboardButton("Teach new word 🧑‍🏫")
     btn2 = telebot.types.KeyboardButton("English test 🤓")
     btn3 = telebot.types.KeyboardButton("Information ℹ️")
-    markup.add(btn1, btn2, btn3)
+    btn4 = telebot.types.KeyboardButton("Leave feedback❓")
+    markup.add(btn1, btn2, btn3, btn4)
 
     bot.send_message(
         message.chat.id,
@@ -60,7 +60,6 @@ def start(message):
 # The main command handler
 @bot.message_handler(func=lambda message: True)
 def reply(message):
-
     """
     Handles all text messages from the user.
     Routes the message to the appropriate functionality based on text:
@@ -74,6 +73,11 @@ def reply(message):
     if message.text.startswith("Information"):
         bot.send_message(message.chat.id, "ℹ️ This bot helps you learn English words for Czech speakers.")
 
+    if message.text.startswith("Leave feedback"):
+        bot.send_message(message.chat.id, "Have you already completed a course with us? If yes, we would be glad to"
+                                          " receive your feedback on our website EXAMPLE-WEB! "
+                                          "https://github.com/jevhen123zavirukha/TelegramBot_english")
+
     elif message.text.startswith("Teach new word"):
         word = random.choice(list(english_words.keys()))
         translation = english_words[word]
@@ -84,7 +88,6 @@ def reply(message):
 
 # Start test
 def start_test(message):
-
     """
     Initializes a new English test for the user.
     Creates a dictionary in `user_tests` to store score and number of asked questions.
@@ -103,7 +106,6 @@ def start_test(message):
 
 # Ask question
 def ask_question(message):
-
     """
     Sends a random English word to the user as a question.
     Generates 4 answer options (1 correct + 3 wrong) and registers
@@ -139,7 +141,6 @@ def ask_question(message):
 
 # Check answer
 def check_answer(message, word, correct):
-
     """
     Checks the user's answer to a question.
     Updates the user's score if correct.
@@ -169,7 +170,8 @@ def check_answer(message, word, correct):
         markup.add(
             telebot.types.KeyboardButton("Teach new word 🧑‍🏫"),
             telebot.types.KeyboardButton("English test 🤓"),
-            telebot.types.KeyboardButton("Information ℹ️")
+            telebot.types.KeyboardButton("Information ℹ️"),
+            telebot.types.KeyboardButton("Leave feedback❓"),
         )
 
         bot.send_message(
@@ -182,7 +184,6 @@ def check_answer(message, word, correct):
 
 # Daily word sending
 def send_daily_word():
-
     """
     Sends a daily English word to all subscribed users.
     Chooses a random word from the dictionary.
