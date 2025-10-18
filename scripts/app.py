@@ -5,10 +5,12 @@ import random
 import schedule
 import time
 import threading
+from flask import Flask, request
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN_BOT')
 bot = telebot.TeleBot(TOKEN)
+app = Flask(__name__)
 
 
 # Function to load words from file
@@ -307,8 +309,30 @@ def scheduler():
 # Run schedule in background
 threading.Thread(target=scheduler, daemon=True).start()
 
-print("Bot is running!")
-bot.polling()
 
+# Flask webhook endpoints
+@app.route("/", methods=["GET"])
+def index():
+    return "Bot is running!", 200
+
+
+@app.route(f"/{TOKEN}", methods=["POST"])
+def webhook():
+    json_str = request.get_data().decode("UTF-8")
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
+    return "OK", 200
+
+
+# Main entrypoint
 if __name__ == "__main__":
-    bot.polling()
+    bot.remove_webhook()
+
+    RAILWAY_URL = ""
+    webhook_url = f"https://{RAILWAY_URL}/{TOKEN}"
+
+    bot.set_webhook(url=webhook_url)
+
+    port = int(os.environ.get("PORT", 8080))
+    print(f"🚀 Bot webhook set at {webhook_url}, running on port {port}")
+    app.run(host="0.0.0.0", port=port)
