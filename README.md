@@ -34,7 +34,6 @@ Built with **Python** and **Telebot**, it’s an open-source project focused on 
 ---
 ## 📸 Images
 <p align="center">
-  <img src="static/1.png" alt="Screenshot 1" width="175"/>
   <img src="static/2.png" alt="Screenshot 2" width="175"/>
   <img src="static/3.png" alt="Screenshot 3" width="175"/>
   <img src="static/4.png" alt="Screenshot 4" width="175"/>
